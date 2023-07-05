@@ -21,16 +21,33 @@ class ContactPage extends StatelessWidget {
   }
 }
 
-class ContactPageBody extends StatelessWidget {
+class ContactPageBody extends StatefulWidget {
   const ContactPageBody({super.key});
+
+  @override
+  State<ContactPageBody> createState() => _ContactPageBodyState();
+}
+
+class _ContactPageBodyState extends State<ContactPageBody> {
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final messageController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    messageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        const ContactTextField(labelText: 'Name'),
-        const ContactTextField(labelText: 'Email'),
-        const ContactTextField(labelText: 'Message'),
+        ContactTextField(labelText: 'Name', controller: nameController),
+        ContactTextField(labelText: 'Email', controller: emailController),
+        ContactTextField(labelText: 'Message', controller: messageController),
         const SizedBox(height: 40),
         _buildContactButton(),
       ],

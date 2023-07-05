@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 
 class ContactTextField extends StatelessWidget {
   final String labelText;
-  const ContactTextField({required this.labelText, super.key});
+  final TextEditingController controller;
+
+  const ContactTextField({
+    required this.labelText,
+    required this.controller,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +19,7 @@ class ContactTextField extends StatelessWidget {
           Flexible(
             child: TextField(
               onChanged: (value) {},
+              controller: controller,
               decoration: InputDecoration(
                 icon: _buildLeadingLock(),
                 labelText: labelText,
