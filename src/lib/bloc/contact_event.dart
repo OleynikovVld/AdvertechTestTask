@@ -13,3 +13,9 @@ class CheckIfValidEvent extends ContactEvent {
     required this.message,
   });
 }
+
+class SendContactEvent extends ContactEvent {
+  final MessageModel message;
+
+  SendContactEvent({required this.message});
+}

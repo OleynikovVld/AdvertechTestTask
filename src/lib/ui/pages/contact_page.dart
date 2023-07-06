@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:src/bloc/contact_bloc.dart';
+import 'package:src/data/contact_model.dart';
+import 'package:src/data/contact_repository.dart';
 import 'package:src/ui/widgets/leading_lock_icon.dart';
 
 class ContactPage extends StatelessWidget {
@@ -19,7 +21,7 @@ class ContactPage extends StatelessWidget {
         elevation: 0,
       ),
       body: BlocProvider<ContactBloc>(
-        create: (context) => ContactBloc(),
+        create: (context) => ContactBloc(repository: ContactRepository()),
         child: const ContactPageBody(),
       ),
     );
@@ -48,14 +50,41 @@ class _ContactPageBodyState extends State<ContactPageBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        _buildTextField('Name', nameController),
-        _buildTextField('Email', emailController),
-        _buildTextField('Message', messageController),
-        const SizedBox(height: 40),
-        _buildContactButton(),
-      ],
+    return BlocListener<ContactBloc, ContactState>(
+      listener: (context, state) {
+        if (state is ContactFailureState) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: Text('Fail'),
+                backgroundColor: Colors.red,
+              ),
+            );
+        }
+        if (state is ContactSuccessfulState) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: Text('Success'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          nameController.text = '';
+          emailController.text = '';
+          messageController.text = '';
+        }
+      },
+      child: Column(
+        children: <Widget>[
+          _buildTextField('Name', nameController),
+          _buildTextField('Email', emailController),
+          _buildTextField('Message', messageController),
+          const SizedBox(height: 40),
+          _buildContactButton(),
+        ],
+      ),
     );
   }
 
@@ -109,8 +138,34 @@ class _ContactPageBodyState extends State<ContactPageBody> {
               ),
             );
           }
+          if (state is ContactLoadingState) {
+            return ElevatedButton(
+              onPressed: null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF986D8E),
+                minimumSize: const Size.fromHeight(50),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+              child: const Text(
+                'Please wait',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+          }
           return ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              BlocProvider.of<ContactBloc>(context).add(
+                SendContactEvent(
+                  message: MessageModel(
+                      name: nameController.text,
+                      email: emailController.text,
+                      message: messageController.text),
+                ),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF986D8E),
               minimumSize: const Size.fromHeight(50),

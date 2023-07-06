@@ -1,9 +1,9 @@
-class ContactModel {
+class MessageModel {
   final String name;
   final String email;
   final String message;
 
-  ContactModel({
+  MessageModel({
     required this.name,
     required this.email,
     required this.message,
