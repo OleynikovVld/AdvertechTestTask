@@ -121,17 +121,19 @@ class _ContactPageBodyState extends State<ContactPageBody> {
       padding: const EdgeInsets.symmetric(horizontal: 30),
       child: BlocBuilder<ContactBloc, ContactState>(
         builder: (context, state) {
-          if (state is ContactInvalidState) {
+          if (state is ContactValidState) {
             return ElevatedButton(
-              onPressed: null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF986D8E),
-                minimumSize: const Size.fromHeight(50),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
+              onPressed: () {
+                BlocProvider.of<ContactBloc>(context).add(
+                  SendContactEvent(
+                    message: MessageModel(
+                        name: nameController.text,
+                        email: emailController.text,
+                        message: messageController.text),
+                  ),
+                );
+              },
+              style: _buttonStyle(),
               child: const Text(
                 'Send',
                 style: TextStyle(fontSize: 18),
@@ -141,14 +143,7 @@ class _ContactPageBodyState extends State<ContactPageBody> {
           if (state is ContactLoadingState) {
             return ElevatedButton(
               onPressed: null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF986D8E),
-                minimumSize: const Size.fromHeight(50),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
+              style: _buttonStyle(),
               child: const Text(
                 'Please wait',
                 style: TextStyle(fontSize: 18),
@@ -156,30 +151,25 @@ class _ContactPageBodyState extends State<ContactPageBody> {
             );
           }
           return ElevatedButton(
-            onPressed: () {
-              BlocProvider.of<ContactBloc>(context).add(
-                SendContactEvent(
-                  message: MessageModel(
-                      name: nameController.text,
-                      email: emailController.text,
-                      message: messageController.text),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF986D8E),
-              minimumSize: const Size.fromHeight(50),
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-            ),
+            onPressed: null,
+            style: _buttonStyle(),
             child: const Text(
               'Send',
               style: TextStyle(fontSize: 18),
             ),
           );
         },
+      ),
+    );
+  }
+
+  ButtonStyle _buttonStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF986D8E),
+      minimumSize: const Size.fromHeight(50),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25),
       ),
     );
   }
